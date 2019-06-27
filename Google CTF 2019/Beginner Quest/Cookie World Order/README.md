@@ -14,9 +14,9 @@ So, testing the chat function we can see that we can send messages normally, but
 
 ![Chat](img/chat.png)
 
-So it seems like there is some basic anti-xss filtering in place. So the next thing to do was simply send messages and try and determine where the bounds are with what is filtered and what is not. After trying a few things it was obvious it's actually fairly leniant, img tags work fine, but it won't allow the `onload` property. `onerror` works just fine but it won't allow messages with the words "script" or "function" in them.
+So it seems like there is some basic anti-xss filtering in place. So the next thing to do was simply send messages and try and determine where the bounds are with what is filtered and what is not. After trying a few things it was obvious it's actually fairly leniant, `img` tags work fine, but it won't allow the `onload` property. `onerror` however, does work but it won't allow messages with the words "script" or "function" in them.
 
-What it does allow just fine however, are messages encoded as HTML Entities, regardless of their contents. As a result, we can just write an arbitrary XSS payload, encode the whole thing as HTML Entities set it to the onerror property, and send away. To test this we can use:
+What it does allow, however, are messages encoded as HTML Entities, regardless of their contents. As a result, we can just write an arbitrary XSS payload, encode the whole thing as HTML Entities, set it to the onerror property, and send away. To test this we can use:
 
 ```html
 <img src="abc "onerror="alert(1)"/>
@@ -59,7 +59,7 @@ Which gives us access to an admin control panel with a few new pages.
 
 ![Admin](img/admin.png)
 
-Unfortunately for us, both the Users and Livestreams pages are blank. However when we try to access the camera controls page, we get a 403 response with the error message:
+Unfortunately for us, both the Users and Livestreams pages are blank and when we try to access the camera controls page, we get a 403 response with the error message:
 
 ```
 Requests only accepted from 127.0.0.1
